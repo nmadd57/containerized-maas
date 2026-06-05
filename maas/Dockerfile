@@ -45,8 +45,8 @@ RUN cp /usr/bin/unsquashfs /snap/snapd/current/usr/bin
 RUN mksquashfs /snap/snapd/current /snapd.snap
 
 
-# Stage 2: Prepare the Noble Minimal base filesystem.
-FROM ubuntu:noble-minimal AS base
+# Stage 2: Prepare the Noble base filesystem.
+FROM ubuntu:noble AS base
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PATH="$PATH:/snap/bin"
