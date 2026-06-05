@@ -56,9 +56,9 @@ Environment="SNAPPY_LAUNCHER_INSIDE_TESTS=true"
 Environment="LANG=en_US.UTF-8"
 Restart=no
 Type=oneshot
-StandardInput=tty
-StandardOutput=tty
-StandardError=tty
+StandardInput=null
+StandardOutput=journal
+StandardError=journal
 WorkingDirectory=$PWD
 
 [Install]
