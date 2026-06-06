@@ -23,6 +23,21 @@ if [ ! -e /var/lib/apt/lists ]; then
     apt-get update
 fi
 
+# When MAAS is already initialized, don't call systemctl exit after the snap
+# install so systemd stays alive with the MAAS pebble services running.
+MAAS_INITIALIZED=""
+if [ -f /var/snap/maas/current/regiond.conf ]; then
+    MAAS_INITIALIZED=true
+fi
+
+if [ -n "$MAAS_INITIALIZED" ]; then
+cat > /usr/local/bin/docker_commandline.sh <<'EOF'
+#!/bin/bash
+export PATH="/snap/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+echo "MAAS already initialized, snap services will start via snapd"
+exit 0
+EOF
+else
 cat > /usr/local/bin/docker_commandline.sh <<EOF
 #!/bin/bash
 # Default environment variables
@@ -40,6 +55,7 @@ echo "Executing: '$CMD $args'"
 $CMD $args
 /bin/systemctl exit \$?
 EOF
+fi
 chmod +x /usr/local/bin/docker_commandline.sh
 
 cat > /etc/systemd/system/docker-exec.service <<EOF
