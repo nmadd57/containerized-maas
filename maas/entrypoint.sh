@@ -35,6 +35,11 @@ cat > /usr/local/bin/docker_commandline.sh <<'EOF'
 #!/bin/bash
 export PATH="/snap/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 echo "MAAS already initialized, snap services will start via snapd"
+# rackd must use localhost so it can reach regiond from inside the container
+# (hairpin NAT doesn't work: container can't reach its own published host ports)
+for rackd_conf in /var/snap/maas/*/rackd.conf; do
+    [ -f "$rackd_conf" ] && sed -i 's|maas_url: http://[^:]*:5240/MAAS|maas_url: http://127.0.0.1:5240/MAAS|g' "$rackd_conf"
+done
 exit 0
 EOF
 else
